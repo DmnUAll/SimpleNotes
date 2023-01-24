@@ -1,27 +1,32 @@
-//
-//  AppLogic.swift
-//  SimpleNotes
-//
-//  Created by Илья Валито on 14.09.2022.
-//
-
 import UIKit
 import CoreData
 
-struct AppLogic {
+// MARK: - CoreDataManager
+final class CoreDataManager {
+
+    // MARK: - Properties and Initializers
+    // swiftlint:disable force_cast
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    var index: Int = 0
-    var notesArray = [Note]()
-    
-    private mutating func saveItems() {
+    // swiftlint:enable force_cast
+    static var shared = CoreDataManager()
+    var editedNoteIndex: Int = 0
+    var notesArray: [Note] = []
+}
+
+// MARK: - Helpers
+extension CoreDataManager {
+
+    private func saveItems() {
         do {
             try context.save()
         } catch {
             print("Error saving cintext: \(error)")
         }
     }
-    
-    mutating func loadItems(with request: NSFetchRequest<Note> = Note.fetchRequest(), sortedBy sortDescriptor: NSSortDescriptor = NSSortDescriptor(key: "date", ascending: false)) {
+
+    func loadItems(with request: NSFetchRequest<Note> = Note.fetchRequest(),
+                   sortedBy sortDescriptor: NSSortDescriptor = NSSortDescriptor(key: "date", ascending: false)
+    ) {
         request.sortDescriptors = [sortDescriptor]
         do {
             notesArray = try context.fetch(request)
@@ -29,28 +34,24 @@ struct AppLogic {
             print("Error fetching data from context: \(error)")
         }
     }
-    
-    mutating func addNote(noteText: String) {
+
+    func addNote(noteText: String) {
         let newNote = Note(context: context)
         newNote.text = noteText
         newNote.date = Date()
         notesArray.append(newNote)
         saveItems()
     }
-    
-    mutating func deleteNote() {
-        context.delete(notesArray[index])
-        notesArray.remove(at: index)
+
+    func deleteNote() {
+        context.delete(notesArray[editedNoteIndex])
+        notesArray.remove(at: editedNoteIndex)
         saveItems()
     }
-    
-    mutating func searchNotes(with text: String) {
-        
-        // Create a search request
+
+    func searchNotes(with text: String) {
         let request: NSFetchRequest<Note> = Note.fetchRequest()
         request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", text)
-        
-        // Sending the request
         loadItems(with: request)
     }
 }
