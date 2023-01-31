@@ -11,7 +11,6 @@ Store, edit, delete and share your notes.
 <img src="https://user-images.githubusercontent.com/82824022/214286098-2430c29c-8f02-4cde-b6e7-ea6c3f86f5ba.PNG" width=30% height=30%>
 </p>
 
-This project was the thirteenth app writen by myself.\
 The main functionality that was applied in this project:
 - CoreData
 - UIActivityViewController
